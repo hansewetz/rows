@@ -1,0 +1,93 @@
+# =======================================================================
+# A very simple mini build system which can be improved upon.
+# (not bad that it is simple though!)
+# See comments in this file what should be improved on.
+# =======================================================================
+
+# Targets
+.SUFFIXES:
+.SUFFIXES: .so .o
+
+.PHONY: all bin lib obj clean
+.SILENT: all bin lib obj clean
+
+# =======================================================================
+# NOTE!
+# Here we should setup options based on a flag set in the Makefile so
+# we automatically add options when user sets a flag.
+# For example, if useOracle is set, then we should add
+# -I, -L and -l options needed to link/compile against Oracle OCCI.
+# Right now it's patched together so we always use all options.
+# =======================================================================
+
+# Add some default so users don't have to add them to LOCAL_XXX vars.
+LOCAL_LIBS      += -lrt
+LOCAL_LIBPATH   += -L$(INSTALL_HOME)/lib64 -L$(INSTALL_HOME)/lib -L$(INSTALL_EXTRA_HOME)/lib -L$(INSTALL_TEST_HOME)/lib -L$(INSTALL_TEST_HOME)/lib64
+LOCAL_INCPATH   += -I. -I$(PROJECT_ROOT)/src/cpp/include
+LOCAL_DEFINES   +=
+LOCAL_CXXFLAGS  +=
+LOCAL_CPPFLAGS  +=
+LOCAL_LDFLAGS   +=
+LOCAL_LDSOFLAGS +=
+
+# Setup compile/link environment - these are the variables used in the final build.
+LIBS=$(LOCAL_LIBS)
+LIBPATH=$(LOCAL_LIBPATH)
+INCPATH=$(LOCAL_INCPATH)
+
+DEFINES=$(LOCAL_DEFINES) -DBOOST_NO_AUTO_PTR
+CXXFLAGS=$(LOCAL_CXXFLAGS)
+CCFLAGS=-c -m64 -fPIC -Wall -pedantic -Werror ${STDFLAG} $(LOCAL_CPPFLAGS) ${GCC_ERROR_IGNORE} ${GCC_USE_GLIBCXX11_ABI} -fconcepts
+CFLAGS=-c -m64 -fPIC -Wall -pedantic $(LOCAL_CPPFLAGS)
+LDFLAGS=-m64 $(LOCAL_LDFLAGS)
+LDSOFLAGS=-shared -fPIC -m64 $(LOCAL_LDSOFLAGS)
+
+# Setup compiler/linker.
+CC=g++
+LD=g++
+LDSO=g++
+
+# Set objects to compile.
+OBJS=$(LOCAL_OBJS)
+
+# Targets.
+all: bin
+
+bin: lib $(LOCAL_TARGET)
+
+lib: obj $(LOCAL_SOTARGET)
+
+obj: $(OBJS)
+
+clean:
+	rm -f $(OBJS) $(LOCAL_SOTARGET) $(LOCAL_TARGET) junk*
+
+# dependency management on header files
+# (we support dependency management from cc and c files)
+# (see: http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/#nonc)
+DEPDIR = .d
+$(shell mkdir -p $(DEPDIR) >/dev/null)
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
+POSTCOMPILE=mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d
+
+# Compilation rules
+%.o: %.cc
+%.o: %.cc $(DEPDIR)/%.d
+	@echo "### Building $@"
+	$(CC) $(DEPFLAGS) $(CXXFLAGS) $(CCFLAGS) $(INCPATH) $(DEFINES) -o $@ $<
+	$(POSTCOMPILE)
+
+$(LOCAL_TARGET): $(OBJS)
+	@echo "### Building $@"
+	$(LD) -o $@ $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(LIBPATH) $(LIBS)
+
+$(LOCAL_SOTARGET): $(OBJS)
+	@echo "### Building $@"
+	$(LDSO) $(CXXFLAGS) $(LDSOFLAGS) -o $@ $(OBJS)
+
+
+# dependency management on header files
+$(DEPDIR)/%.d: ;
+.PRECIOUS: $(DEPDIR)/%.d
+-include $(patsubst %,$(DEPDIR)/%.d,$(basename $(LOCAL_OBJS)))
+
