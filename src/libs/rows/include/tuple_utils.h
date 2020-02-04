@@ -16,6 +16,13 @@ template<typename T>
 concept Tuple=is_tuple<T>::value;
 
 //-----------------------------------------
+// print a value wrapped in an std::optional
+template<typename T>
+std::ostream&operator<<(std::ostream&os,std::optional<T>const&t){
+  if(t)return os<<t.value();
+  else return os<<"[null]";
+}
+//-----------------------------------------
 // print a variable together with its type 
 template<typename T>
 void print_type_value(std::ostream&os,T&&t){
@@ -34,10 +41,6 @@ std::ostream&operator<<(std::ostream&os,T&&t){
 }
 //-----------------------------------------
 // apply a function object to each element in a tuple, passing index and tuple element as parameters
-template<typename Func,typename...Args> 
-void apply_with_index(Func f,std::tuple<Args...>const&tu){
-  apply_with_index_aux(tu,f,std::make_index_sequence<sizeof...(Args)>{});
-}
 template<Tuple T,typename F,std::size_t...Inds>
 void apply_with_index_aux(T&&tu,F f,std::index_sequence<Inds...>){
   (f(Inds,get<Inds>(std::forward<T>(tu))),...);

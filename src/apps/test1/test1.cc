@@ -1,6 +1,11 @@
 #include <rows/csv.h>
 #include <rows/tuple_utils.h>
+#include <rows/tuple_utils.h>
+#include <boost/iterator/iterator_facade.hpp>
+#include <memory>
+#include <stdexcept>
 #include <iostream>
+
 using namespace std;
 using namespace rows;
 
@@ -17,31 +22,11 @@ struct Bar{
     cout<<"["<<Ind<<", "<<size<<"]";
   }
 };
-
 // main test program
 int main(){
-/*
-  // test1
-  using row_t=tuple<int,string,size_t>;
-  row_t row{1,"Hello"s,17ul};
-  cout<<make_tuple(1,"Hello")<<endl;
-
-  apply_with_index(Foo{},std::forward<row_t>(row));
-  cout<<endl;
-  apply_with_index(Foo{},std::make_tuple(1,"Hello"s,1.2));
-  cout<<endl;
-
-  using bind_t=tuple<size_t,size_t,size_t>;
-  bind_t bind{7,8,9};
-  apply_with_index_template(Bar<row_t>{},bind);
-  cout<<endl;
-
-  using utup_t=uniform_tuple_builder<3,int>::type;
-  cout<<utup_t{5,6,7}<<endl;
-*/
   // test2
   auto db=make_shared<csv::stream_db>(cin,',');
-  auto stmt=db->createInputStatement(":1:1:1:1",1);
+  auto stmt=db->createInputStatement(":3:2:1",1);
   auto rs=stmt->execute();
   int cnt=0;
   size_t ncols=rs->ncols();

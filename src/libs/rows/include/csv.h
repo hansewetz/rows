@@ -60,7 +60,7 @@ private:
 // column getters from result set
 template<typename T>std::optional<T>getAux(std::size_t ind,result_set&rs);
 
-// class
+// class representing result set
 class result_set{
 public:
   // ctor,dtor

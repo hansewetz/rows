@@ -172,7 +172,9 @@ size_t result_set::ncols()const{
 optional<int>result_set::getInt(std::size_t ind){
   checkGet(ind);
   auto const&v=rows_[currind_][ind];
-  if(!v)return optional<int>{};
+  if(!v){
+    return optional<int>{};
+  }
   return optional<int>(boost::lexical_cast<int>(v.value()));
 }
 // string - column getter

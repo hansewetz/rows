@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+
+# junk files and other rendom files
+*junk*
+test1
+test2
