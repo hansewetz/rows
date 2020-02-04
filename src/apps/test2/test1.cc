@@ -10,7 +10,7 @@ using namespace rows;
 int main(){
   // create database. statment and resultset
   auto db=make_shared<csv::stream_db>(cin,',');
-  auto stmt=db->createInputStatement(":0:1",1);
+  auto stmt=db->createInputStatement(":1:0",1);
   auto rs=stmt->execute();
 
   // create a data fetcher to retrieve rows with
