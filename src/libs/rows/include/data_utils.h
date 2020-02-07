@@ -11,21 +11,10 @@ namespace rows{
 // (fetch data from a result set)
 
 
-template<typename T>struct data_fetcher_aux;
-
-// size_t
-template<>struct data_fetcher_aux<std::optional<int>>{
+template<typename T>struct data_fetcher_aux{
   template<typename ResultSet>
-  static void fetch(std::size_t ind,std::shared_ptr<ResultSet>rs,std::optional<int>&i){i=rs->getInt(ind);}
+  static void fetch(std::size_t ind,std::shared_ptr<ResultSet>rs,T&v){v=rs->template get<T>(ind);}
 };
-// string
-template<>struct data_fetcher_aux<std::optional<std::string>>{
-  template<typename ResultSet>
-  static void fetch(std::size_t ind,std::shared_ptr<ResultSet>rs,std::optional<std::string>&i){i=rs->getString(ind);}
-};
-// NOTE! more specializations
-// ...
-
 // data fetcher class
 // (retrieve data from result set)
 // (based on types in a tuple the 'fetch' method will retrieve items of the corresponding tuple  element types)
@@ -41,10 +30,12 @@ public:
 
   // get data for current row
   template<typename row_t>
-  void fetch(row_t&row){apply_with_index(*this,row);}
-
+  row_t&fetch(row_t&row){
+    apply_with_index(*this,row);
+    return row;
+  }
   // get data at a specific index
-  // (this is a function object)(
+  // (this is the 'function' in this class)
   template<typename T>
   void operator()(std::size_t ind,T&t)const{data_fetcher_aux<T>::fetch(ind,rs_,t);}
 private:

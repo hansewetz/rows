@@ -58,7 +58,7 @@ private:
 // --- result_set
 
 // column getters from result set
-template<typename T>std::optional<T>getAux(std::size_t ind,result_set&rs);
+template<typename T>T getAux(std::size_t ind,result_set&rs);
 
 // class representing result set
 class result_set{
@@ -71,14 +71,14 @@ public:
   bool next();
 
   // get fields within current row
-  template<typename T>std::optional<T>get(std::size_t ind){return getAux<T>(ind,*this);}
+  template<typename T>T get(std::size_t ind){return getAux<T>(ind,*this);}
 
   // get #of columns with current row
   std::size_t ncols()const;
 
   // column getters
-  std::optional<int>getInt(std::size_t ind);
-  std::optional<std::string>getString(std::size_t ind);
+  std::optional<int>getOptInt(std::size_t ind);
+  std::optional<std::string>getOptString(std::size_t ind);
 private:
   using row_t=std::vector<std::optional<std::string>>;  // row of strings (columns converted to a type on request)
 
@@ -95,6 +95,6 @@ private:
   std::size_t rownum_;                                  // current row number
 };
 // column getters implementation
-template<>std::optional<int>getAux<int>(std::size_t ind,result_set&rs){return rs.getInt(ind);}
-template<>std::optional<std::string>getAux<std::string>(std::size_t ind,result_set&rs){return rs.getString(ind);}
+template<>std::optional<int>getAux<std::optional<int>>(std::size_t ind,result_set&rs){return rs.getOptInt(ind);}
+template<>std::optional<std::string>getAux<std::optional<std::string>>(std::size_t ind,result_set&rs){return rs.getOptString(ind);}
 }

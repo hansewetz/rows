@@ -169,16 +169,14 @@ size_t result_set::ncols()const{
   return stmt_.lock()->cols().size();
 }
 // int - column getter
-optional<int>result_set::getInt(std::size_t ind){
+optional<int>result_set::getOptInt(std::size_t ind){
   checkGet(ind);
   auto const&v=rows_[currind_][ind];
-  if(!v){
-    return optional<int>{};
-  }
+  if(!v)return optional<int>{};
   return optional<int>(boost::lexical_cast<int>(v.value()));
 }
 // string - column getter
-optional<string>result_set::getString(std::size_t ind){
+optional<string>result_set::getOptString(std::size_t ind){
   checkGet(ind);
   return rows_[currind_][ind];
 }
