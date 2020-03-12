@@ -12,7 +12,7 @@ export INSTALL_HOME=~/installs                                 # local installat
 
 
 export PATH=${INSTALL_HOME}/bin:${PATH}
-export LD_LIBRARY_PATH=${INSTALL_HOME}/lib64:${INSTALL_HOME}/lib:${LD_LIBRARY_PATH}:${PROJECT_ROOT}/artefacts/lib
+export LD_LIBRARY_PATH=${PROJECT_ROOT}/artefacts/lib:${INSTALL_HOME}/lib64:${INSTALL_HOME}/lib:${LD_LIBRARY_PATH}:${PROJECT_ROOT}/artefacts/lib
 
 # build environment root
 export ENV_ROOT=`pwd`

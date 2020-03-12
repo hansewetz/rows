@@ -11,8 +11,8 @@ int main(){
   // row type for this test
   using row_t=tuple<optional<string>,optional<int>,optional<string>>;
 
-  // create database. statment and resultset
-  auto db=make_shared<csv::stream_db>(cin,',');
+  // create database, statment and resultset
+  auto db=make_shared<csv::stream_db>(cin,',');   // NOTE! having weak pointers in csv class we cannot have db by value - fixe this
   auto stmt=db->createInputStatement(":1:0:1",1);
   auto rs=stmt->execute();
 

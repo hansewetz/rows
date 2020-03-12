@@ -33,8 +33,8 @@ int main(){
   while(rs->next()){
     cout<<"row: "<<cnt<<": [";
     for(size_t i=0;i<ncols;++i){
-      auto const&v=rs->get<int>(i);
-      if(v)cout<<rs->get<int>(i).value();
+      auto const&v=rs->get<optional<int>>(i);
+      if(v)cout<<rs->get<optional<int>>(i).value();
       else cout<<"null";
       if(i<ncols-1)cout<<", ";
     }
